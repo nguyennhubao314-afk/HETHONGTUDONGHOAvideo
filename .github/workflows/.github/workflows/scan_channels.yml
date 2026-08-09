@@ -1,0 +1,28 @@
+name: Quét kênh từ Sheet 1 → Đổ video ra Sheet 2
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Thiết lập Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Cài thư viện
+        run: |
+          pip install gspread oauth2client yt-dlp requests
+      - name: Tạo file credentials
+        env:
+          GCP_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        run: echo "$GCP_KEY" > credentials.json
+      - name: Chạy quét kênh
+        env:
+          SHEET_SOURCE: ${{ secrets.SHEET_SOURCE_ID }}
+          SHEET_VIDEO: ${{ secrets.SHEET_VIDEO_ID }}
+        run: python scan_channels_to_sheet.py
