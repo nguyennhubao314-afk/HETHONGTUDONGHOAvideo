@@ -1,0 +1,36 @@
+name: Cơ chế 5 — Đăng tự động
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Thiết lập Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cài thư viện
+        run: |
+          pip install gspread oauth2client google-api-python-client google-auth-httplib2 google-auth-oauthlib requests gdown
+
+      - name: Tạo file xác thực
+        env:
+          GCP_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          YT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+        run: |
+          echo "$GCP_KEY" > credentials.json
+          echo "$YT_SECRET" > youtube_client.json
+
+      - name: Chạy đăng bài
+        env:
+          SHEET_VIDEO_ID: ${{ secrets.SHEET_VIDEO_ID }}
+          YOUTUBE_REFRESH: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          TIKTOK_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+          FB_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+        run: python mechanisms/publish_video.py
