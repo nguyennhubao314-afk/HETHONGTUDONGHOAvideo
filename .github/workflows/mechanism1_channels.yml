@@ -2,7 +2,7 @@ name: Quét kênh từ Sheet 1 → Đổ video ra Sheet 2
 
 on:
   schedule:
-    - cron: '0 /1 * * *'
+    - cron: 0 */0.5 * * *
   workflow_dispatch:
 
 jobs:
@@ -25,4 +25,4 @@ jobs:
         env:
           SHEET_SOURCE: ${{ secrets.SHEET_SOURCE_ID }}
           SHEET_VIDEO: ${{ secrets.SHEET_VIDEO_ID }}
-        run: python mechanism1_channels.yml
+        run: python mechanism1/scan_channels_to_sheet.py
