@@ -25,4 +25,4 @@ jobs:
         env:
           SHEET_SOURCE: ${{ secrets.SHEET_SOURCE_ID }}
           SHEET_VIDEO: ${{ secrets.SHEET_VIDEO_ID }}
-        run: python scan_channels_to_sheet.py
+        run: python mechanism1_channels.yml
