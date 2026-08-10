@@ -1,0 +1,31 @@
+name: Cơ chế 4 — AI Viết nội dung đăng bài
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # Tự động chạy mỗi 5 phút
+  workflow_dispatch:        # Cho phép chạy thủ công
+
+jobs:
+  generate_content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Thiết lập Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cài thư viện
+        run: |
+          pip install gspread oauth2client google-generativeai
+
+      - name: Tạo file credentials
+        env:
+          GCP_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        run: echo "$GCP_KEY" > credentials.json
+
+      - name: Chạy AI viết nội dung
+        env:
+          SHEET_VIDEO_ID: ${{ secrets.SHEET_VIDEO_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python mechanisms/write_content.py
